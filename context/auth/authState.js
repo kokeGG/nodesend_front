@@ -3,7 +3,7 @@ import { useReducer } from "react";
 import authContext from "./authContext";
 import authReducer from "./authReducer";
 
-import {USUARIO_AUTENTICADO} from '../../types'
+import {REGISTRO_EXITOSO} from '../../types'
 
 import clienteAxios from "../../config/axios";
 
@@ -23,6 +23,11 @@ const AuthState = ({ children }) => {
     try {
       const respuesta = await clienteAxios.post('/api/usuarios', datos);
       console.log(respuesta)
+      console.log(respuesta.data.msg);
+      dispatch({
+        type: REGISTRO_EXITOSO,
+        payload: respuesta.data.msg
+      })
     } catch (error) {
       console.log(error);
     }
