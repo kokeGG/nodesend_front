@@ -3,7 +3,7 @@ import { useReducer } from "react";
 import authContext from "./authContext";
 import authReducer from "./authReducer";
 
-import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA } from "../../types";
+import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_ERROR } from "../../types";
 
 import clienteAxios from "../../config/axios";
 
@@ -43,6 +43,27 @@ const AuthState = ({ children }) => {
     }, 3000);
   };
 
+  // Autenticar usuarios
+  const iniciarSesion = async (datos) => {
+    try {
+      const respuesta = await clienteAxios.post("/api/auth", datos);
+      console.log(respuesta);
+    } catch (error) {
+      console.log(error.response.data.msg);
+      dispatch({
+        type: LOGIN_ERROR,
+        payload: error.response.data.msg
+      })
+    }
+    
+    // Limpiar la alerta después de 3 segundos.
+    setTimeout(() => {
+      dispatch({
+        type: LIMPIAR_ALERTA,
+      });
+    }, 3000);
+  };
+
   // Usuario autenticado
   const usuarioAutenticado = (nombre) => {
     dispatch({
@@ -60,6 +81,7 @@ const AuthState = ({ children }) => {
         mensaje: state.mensaje,
         registrarUsuario,
         usuarioAutenticado,
+        iniciarSesion,
       }}
     >
       {children}

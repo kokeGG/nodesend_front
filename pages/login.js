@@ -1,25 +1,38 @@
 import { useFormik } from "formik";
-import React from "react";
+import React, {useContext} from "react";
 import Layout from "../components/Layout";
 import * as Yup from "yup";
+import authContext from "../context/auth/authContext";
+import Alerta from '../components/Alerta'
 
 const login = () => {
+
+  //definir el context
+  const AuthContext = useContext(authContext);
+  const { mensaje, iniciarSesion } = AuthContext;
+
+  //Formulario y validacion con formik y yup
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("El email es obligatorio"),
+      email: Yup.string().email('El email no es válido').required("El email es obligatorio"),
       password: Yup.string().required("El password es obligatorio"),
     }),
+    onSubmit: valores => {
+      iniciarSesion(valores)
+    }
   });
+
   return (
     <Layout>
       <div className="md:w-4/5 xl:w-3/5 mx-auto mb-32">
         <h2 className="text-4xl font-sans font-bold text-gray-800 text-center my-4">
           Iniciar Sesión
         </h2>
+        { mensaje && <Alerta/> }
 
         <div className="flex justify-center mt-5">
           <div className="w-full max-w-lg">
@@ -43,7 +56,7 @@ const login = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.email && formik.touched.email ? (
+                {formik.touched.email && formik.errors.email ? (
                   <div className="my-2 bg-gray-200 border-l-4 border-red-500 text-red-700 p-4">
                     <p>{formik.errors.email}</p>
                   </div>
@@ -58,7 +71,7 @@ const login = () => {
                   Password
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   className="shadow bg-white appereance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="password"
                   placeholder="Password de Usuario"
@@ -66,7 +79,7 @@ const login = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.password && formik.touched.password ? (
+                {formik.touched.password && formik.errors.password ? (
                   <div className="my-2 bg-gray-200 border-l-4 border-red-500 text-red-700 p-4">
                     <p>{formik.errors.password}</p>
                   </div>
