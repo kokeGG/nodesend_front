@@ -2,16 +2,18 @@ import React from "react";
 import { useReducer } from "react";
 import authContext from "./authContext";
 import authReducer from "./authReducer";
-
 import { 
   REGISTRO_EXITOSO, 
   REGISTRO_ERROR, 
   LIMPIAR_ALERTA, 
   LOGIN_EXITOSO,
   LOGIN_ERROR, 
+  USUARIO_AUTENTICADO,
+  CERRAR_SESION
 } from "../../types";
 
 import clienteAxios from "../../config/axios";
+import tokenAuth from "../../config/tokenAuth";
 
 const AuthState = ({ children }) => {
   // Definir un state inicial
@@ -73,13 +75,35 @@ const AuthState = ({ children }) => {
     }, 3000);
   };
 
-  // Usuario autenticado
-  const usuarioAutenticado = (nombre) => {
+  // Retorne el usuario autenticado en base al JWT
+  const usuarioAutenticado = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      tokenAuth(token)
+    }
+
+    try {
+      const respuesta = await clienteAxios.get('api/auth');
+      console.log(respuesta.data.usuario)
+      console.log(respuesta);
+      dispatch({
+        type: USUARIO_AUTENTICADO,
+        payload: respuesta.data.usuario
+      })
+    } catch (error) {
+      dispatch({
+        type: LOGIN_ERROR,
+        payload: error.response.data.msg
+      })
+    }
+  }
+
+  //Cerrar la sesión
+  const cerrarSesion = () => {
     dispatch({
-      type: USUARIO_AUTENTICADO,
-      payload: nombre,
-    });
-  };
+      type: CERRAR_SESION
+    })
+  }
 
   return (
     <authContext.Provider
@@ -91,6 +115,7 @@ const AuthState = ({ children }) => {
         registrarUsuario,
         usuarioAutenticado,
         iniciarSesion,
+        cerrarSesion
       }}
     >
       {children}
