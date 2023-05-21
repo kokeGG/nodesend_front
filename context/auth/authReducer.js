@@ -7,7 +7,7 @@ import {
   USUARIO_AUTENTICADO,
   CERRAR_SESION
 } from "../../types";
-
+//Funciones que modifican el state
 export default (state, action) => {
   switch (action.type) {
     case REGISTRO_EXITOSO:

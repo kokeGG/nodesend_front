@@ -14,7 +14,7 @@ import {
 
 import clienteAxios from "../../config/axios";
 import tokenAuth from "../../config/tokenAuth";
-
+//authState tienen las acciones que disparan lo que hace reducer
 const AuthState = ({ children }) => {
   // Definir un state inicial
   const initialState = {
